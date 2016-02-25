@@ -7,8 +7,6 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');              // mongoose for mongodb
 var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
 var database = require('./config/database');
-var routes = require('./routes/index');
-var users = require('./routes/users');
 var port = 8888;         // set the port
 
 
@@ -36,14 +34,28 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
-app.use(methodOverride());
+//app.use(methodOverride());
 
 
-// routes 
-app.use('/', routes);
-var todos = require('./routes/todos.js');
-app.use('/todo', todos);
-//app.use('/users', users);
+var main = require('./routes/index');
+var todo = require('./routes/todos');
+var todoRouter = express.Router();
+app.use('/todos', todoRouter);
+
+app.get('/', main.index);
+todoRouter.get('/', todo.all);
+todoRouter.get('/:id', todo.viewOne);
+todoRouter.post('/add', todo.add);
+todoRouter.post('/remove/:id', todo.remove);
+todoRouter.post('/edit/:id', todo.edit);
+
+
+//var routes = require('./routes/index');
+//var users = require('./routes/users');
+//var todos = require('./routes/todos');
+//app.use('/', routes);
+//app.use('/todos', todos);
+//app.use('/delete/:id', todos);
 
 
 // listen (start app with node server.js) ======================================

@@ -1,0 +1,29 @@
+extends layout
+
+block content
+    h1.text-center All Todos
+    .panel.panel-default
+        for todo in todos
+            .panel-body
+                a(href='/todos/#{todo._id}') #{todo.description}  #{todo.notify_at}
+                form(action='/todos/remove/#{todo._id}', method='post')
+                    input.btn.btn-danger.pull-right(type='submit', value='Delete')
+
+
+    
+    form(method='post', action='/todos/add')
+        .input-group
+            input.form-control(type='text', placeholder='What do you have to do?', name='content')
+            span.input-group-btn
+                div(id="datetimepicker" , class="input-append date")
+                    input( data-format="dd/MM/yyyy hh:mm:ss", type="text", name='todotime')
+                    span( class="add-on")
+                        i( data-time-icon="icon-time", data-date-icon="icon-calendar")
+                input.btn.btn-success(type='submit', value='Add Todo')
+     
+     
+    script( type="text/javascript").
+      $('#datetimepicker').datetimepicker({
+        format: 'dd/MM/yyyy hh:mm:ss',
+        language: 'en'
+      });
