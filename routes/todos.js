@@ -9,7 +9,8 @@ module.exports = {
 		if(!req.user)
 			 res.redirect ('/')
         else
-			Todo.find({}, function (err, todos) {
+			console.log('GetAll' + req.user.username)
+            Todo.find({  user: req.user.username}, function (err, todos) {
 			if (err) return next(err);
 			res.render('todos', { title: 'ToDo App' ,
 								user : req.user, 
@@ -28,8 +29,11 @@ module.exports = {
         var todoContent = req.body.content;
 		var todoTime = req.body.todotime;
         // create & insert todo
+		console.log('Username' + req.user.username)
         new Todo({
-        description : todoContent,
+        user : req.user.username,
+		description : todoContent,
+		completed : false, 
         notify_at   : todoTime
         }).save( function( err, todo, count ){
         res.redirect( '/' );
