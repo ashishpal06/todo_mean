@@ -1,11 +1,9 @@
 extends layout
 
 block content
-    h1= title
-    p Welcome to #{title}
-    a(href='/').btn.btn-success.btn-lg View all todos
-    form(method='post', action='/todos/add')
-        .input-group
-            input.form-control(type='text', placeholder='What do you have to do?', name='content')
-            span.input-group-btn
-                input.btn.btn-success(type='submit', value='Add Todo')
+
+  if (!user)
+    a(href="/users/login") Login
+    br
+    a(href="/users/register") Register
+  

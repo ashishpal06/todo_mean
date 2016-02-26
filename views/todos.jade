@@ -1,6 +1,9 @@
 extends layout
 
 block content
+    p You are currently logged in as #{user.username}
+      a(href="/users/logout")       Logout
+    
     h1.text-center All Todos
     .panel.panel-default
         for todo in todos

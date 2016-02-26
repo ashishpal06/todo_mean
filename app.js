@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');              // mongoose for mongodb
 var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
 var database = require('./config/database');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 var port = 8888;         // set the port
 
 
@@ -28,19 +30,35 @@ mongoose.connect(database.url, function(err) {	// connect to mongoDB database on
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
-//app.use(methodOverride());
+app.use(require('express-session')({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
+// passport config
+var Account = require('./models/Account');
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
 
 var main = require('./routes/index');
 var todo = require('./routes/todos');
+var users = require('./routes/users');
+
 var todoRouter = express.Router();
 app.use('/todos', todoRouter);
+app.use('/users', users);
+
+
+app.use('/login', users);
 
 app.get('/', main.index);
 todoRouter.get('/', todo.all);
@@ -50,14 +68,7 @@ todoRouter.post('/remove/:id', todo.remove);
 todoRouter.post('/edit/:id', todo.edit);
 
 
-//var routes = require('./routes/index');
-//var users = require('./routes/users');
-//var todos = require('./routes/todos');
-//app.use('/', routes);
-//app.use('/todos', todos);
-//app.use('/delete/:id', todos);
-
-
+app.use(express.static(path.join(__dirname, 'public')));
 // listen (start app with node server.js) ======================================
 app.listen(port);
 console.log("App listening on port : " + port);

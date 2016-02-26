@@ -6,9 +6,14 @@ var Todo = require('../models/Todo.js');
 
 module.exports = {
     all: function(req, res, next){
-        Todo.find({}, function (err, todos) {
-        if (err) return next(err);
-        res.render('todos', { todos: todos });
+		if(!req.user)
+			 res.redirect ('/')
+        else
+			Todo.find({}, function (err, todos) {
+			if (err) return next(err);
+			res.render('todos', { title: 'ToDo App' ,
+								user : req.user, 
+								todos: todos });
     });
     },
 
@@ -42,35 +47,3 @@ module.exports = {
         console.log('Todo ' + req.params.id + ' updated')
     }
 };
-
-/* GET /todos listing. */
-/*router.get('/', function(req, res, next) {
-  Todo.find({}, function (err, todos) {
-    if (err) return next(err);
-    //res.json(todos);
-    res.render('todos', { todos: todos });
-  });
-});
-
-/* POST /todos 
-router.post('/', function(req, res, next) {
-  var todoContent = req.body.content;
-  // create & insert todo
-  new Todo({
-    description : todoContent,
-    notify_at   : Date.now()
-  }).save( function( err, todo, count ){
-    res.redirect( '/todos' );
-  });
-});
-
-
-router.post('/delete/:id', function(req, res, next) {
-  var id = req.params.id;
-
-  Todo.findByIdAndRemove(id, function(err, todo){
-  if(err) res.render('error', { error: 'Error deleting todo'});
-     res.redirect('/todos');
-   });
-});
-module.exports = router;*/
